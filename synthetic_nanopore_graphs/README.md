@@ -3,9 +3,11 @@ Take a genome reference as FASTA file, creates synthetic Nanopore reads with ann
 
 
 ## Install: 
+
 Clone Nanosim https://github.com/bcgsc/NanoSim
 Unpack the model human_NA12878_DNA_FAB49712_albacore
 change following in simulater.py:
+
 --------------------------
 change imports from:
 ```
