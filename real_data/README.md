@@ -5,9 +5,9 @@ Create data set with real reads from CHM13 https://github.com/marbl/CHM13
 Download reference: 
 https://s3-us-west-2.amazonaws.com/human-pangenomics/T2T/CHM13/assemblies/chm13.draft_v1.1.fasta.gz
 
-####Reference:
+#### Reference:
 chm13.draft_v1.1.fasta
-####Reads:
+#### Reads:
 SRX5633451.fastq
 
 Workflow for creating real data set:
