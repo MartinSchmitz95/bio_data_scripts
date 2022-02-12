@@ -4,7 +4,6 @@ Take a genome reference as FASTA file, creates synthetic Nanopore reads with ann
 
 ## Install: 
 Clone Nanosim https://github.com/bcgsc/NanoSim
-
 Unpack the model human_NA12878_DNA_FAB49712_albacore
 change following in simulater.py:
 --------------------------
@@ -30,5 +29,5 @@ def set_globals():
 Clone Lovros Raven fork at branch "filter" into a directory "vendor"
 https://github.com/lvrcek/raven/tree/filter
 
-##Usage exampmle:
+## Usage exampmle:
 python main.py --data path/to/reference --reads 200000 --threads 16
