@@ -7,3 +7,6 @@ Create data set with real reads and annotated strand and position info from CHM1
 
 ## Synthetic Nanopore Graphs
 Create Raven Graphs directly from a Reference Genome. Use Nanosim to create synthetic reads and call Raven to create the graph.
+
+## Split Fasta Ref
+Split a .fasta reference file into one fasta file per entry.
