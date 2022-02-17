@@ -21,9 +21,8 @@ clone and make the repo: https://github.com/chhylp123/hifiasm
 clone and make the repo https://github.com/lh3/minimap2
 ```
 minimap2 -d ref.mmi chm13.draft_v1.1.fasta
-minimap2 -x splice ref.mmi real_corrected.ec.fa > alignment.paf
+minimap2 -c ref.mmi real_corrected.ec.fa > alignment.paf
 ```
-(I am not sure if the splice mode was the right thing to do yet. But current data is created this way (12/2/22))
 #### 3. Run script
  
 ```
