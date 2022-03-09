@@ -4,6 +4,7 @@ import os
 import argparse
 import pickle
 from Bio import SeqIO
+import logging
 
 def graph_from_scratch_builder(path):
     pos_reads = []
@@ -28,7 +29,7 @@ def graph_from_scratch_builder(path):
 
 def delete_contained_reads(reads):
     reads = sorted(reads, key=lambda tup: tup[1])
-    print("amount of reads: ", len(reads))
+    #print("amount of reads: ", len(reads))
     i = -1
     while i<len(reads)-1:
         i += 1
@@ -43,7 +44,7 @@ def delete_contained_reads(reads):
                 continue
             if reads[j][1] > reads[i][2]:
                 break
-    print("after deleting contained reads: ", len(reads))
+    #print("after deleting contained reads: ", len(reads))
     return reads
 
 def create_gt_graph_from_scratch(reads):
@@ -86,32 +87,38 @@ def load_graph(path):
     return graph
 
 def run(args):
+
     raven_graph = load_graph(args.graph)
     print("Raven graph loaded")
     gt_graph = graph_from_scratch_builder(args.reads)
     print("Ground Truth graph created")
+
+    logging.basicConfig(filename=args.log, level=logging.INFO)
 
     nodes_fp = raven_graph.nodes() - gt_graph.nodes()
     nodes_fn = gt_graph.nodes() - raven_graph.nodes()
     edges_fp = raven_graph.edges() - gt_graph.edges()
     edges_fn = gt_graph.edges() - raven_graph.edges()
 
-    print(f"Amount of Nodes in Raven Graph {len(raven_graph.nodes)}, Amount of Nodes in Ground Truth graph {len(gt_graph.nodes)}")
-    print("False positive nodes:" , nodes_fp)
-    print("False negative nodes:" , nodes_fn)
-    print("False positive edges" , edges_fp)
-    print("False negative edges" , edges_fn)
+    #logging.info()
+    logging.info(f"Amount of Nodes in Raven Graph {len(raven_graph.nodes)}, Amount of Nodes in Ground Truth graph {len(gt_graph.nodes)}")
+    logging.info(f"False positive nodes:{nodes_fp}" )
+    logging.info(f"False negative nodes:{nodes_fn}" )
+    logging.info(f"False positive edges{edges_fp}" )
+    logging.info(f"False negative edges{edges_fn}" )
 
-    print("Amount of false positive nodes:" , len(nodes_fp))
-    print("Amount of false negative nodes:" , len(nodes_fn))
-    print("Amount of false positive edges" , len(edges_fp))
-    print("Amount of false negative edges" , len(edges_fn))
+    logging.info(f"Amount of false positive nodes:{ len(nodes_fp)}")
+    logging.info(f"Amount of false negative nodes:{len(nodes_fn)}" )
+    logging.info(f"Amount of false positive edges{len(edges_fp)}" )
+    logging.info(f"Amount of false negative edges{len(edges_fn)}" )
 
+    print(f"finished. Written into logfile:{args.log}" )
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--graph', type=str, default='data/chr22_raven.dgl', help='Path to dgl file')
     parser.add_argument('--reads', type=str, default='data/ecoli.fastq', help='Path to fastq or fasta file')
+    parser.add_argument('--log', type=str, default='comparison.log', help='Name of log file')
 
 
     args = parser.parse_args()
