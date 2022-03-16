@@ -5,16 +5,25 @@ import argparse
 import pickle
 from Bio import SeqIO
 import logging
+import graph_parser
+import re
+
 
 def graph_from_scratch_builder(path):
     pos_reads = []
     neg_reads = []
-    for record in SeqIO.parse(path, path[-5:]): # path[-5:] is fasta for fasta file, anf fastq for fastq file
+    for idx, record in enumerate(SeqIO.parse(path, path[-5:])): # path[-5:] is fasta for fasta file, anf fastq for fastq file
         des = record.description.split()
-        read = (int(record.id), int(des[3][6:-1]), int(des[4][4:]))
-        if des[2][-2] == '+':
+        if len(des) == 5:
+            start_index = 1
+        elif len(des) == 4:
+            start_index = 0
+        else:
+            print("something went wrong")
+        read = (idx, int(des[start_index + 2][6:-1]), int(des[start_index + 3][4:]))
+        if des[start_index + 1][-2] == '+':
             pos_reads.append(read)
-        elif des[2][-2] == '-':
+        elif des[start_index + 1][-2] == '-':
             neg_reads.append(read)
         else:
             print("error wrong strand symbol")
@@ -87,8 +96,8 @@ def load_graph(path):
     return graph
 
 def run(args):
-
-    raven_graph = load_graph(args.graph)
+    raven_graph = graph_parser.from_csv(args.graph, args.reads)
+    #raven_graph = load_graph(args.graph)
     print("Raven graph loaded")
     gt_graph = graph_from_scratch_builder(args.reads)
     print("Ground Truth graph created")
@@ -116,8 +125,8 @@ def run(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--graph', type=str, default='data/chr22_raven.dgl', help='Path to dgl file')
-    parser.add_argument('--reads', type=str, default='data/ecoli.fastq', help='Path to fastq or fasta file')
+    parser.add_argument('--graph', type=str, default='data/chrX/chrX.csv', help='Path to csv file')
+    parser.add_argument('--reads', type=str, default='data/chrX/chrX.fasta', help='Path to fastq or fasta file')
     parser.add_argument('--log', type=str, default='comparison.log', help='Name of log file')
 
 
