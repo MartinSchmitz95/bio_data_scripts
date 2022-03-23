@@ -7,7 +7,9 @@ This folder contains scripts to investigate raven assembly graphs.
 ### Introduction
 Use the script tp investigate a raven graph from csv and gfa files. The script takes the csv and gfa files and the fastq or fasta file which was used to create the graph as input and returns a logfile as output.
 
-The script needs the fastq/fasta file with annotated strand, start and end position to create a ground truth graph. In a first step all contained reads are deleted. In a second step all real overlaps (taken from the annotated position and strand information) are taken and added as edges to the graph. This way, the created graph consists of all correct obverlaps.
+The script needs the fastq/fasta file with annotated strand, start and end position to create a ground truth graph and a Raven output csv and gfa file to compare/
+First the Raven graph is created out of the csv and gfa file. This graph contains nodes of the reads of the input fastq file plus their additional virtual complements. The ID of the nodes is not(!) identical with the ID of the reads is the fastq file.
+The program takes all nodes from the Raven graph and investigates them for possible contained reads. All nodes from the raven graph except the contained reads are added to the gt-graph. In a second step the best 32 real overlaps (taken from the annotated position and strand information) are taken for every read and added as edges to the gt-graph. 
 Then the Raven assembly graph csv and gfa files are loaded and compared with the created ground-truth graph. 
 
 The result of the comparison is written into a log file. The log file shows all edges and nodes that are in the Raven graph and not in the ground-truth graph and vice versa.
