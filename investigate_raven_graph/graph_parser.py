@@ -250,16 +250,18 @@ def from_gfa(graph_path, reads_path):
             line = line.strip().split()
             if len(line) == 5:
                 tag, id, sequence, length, count = line
-                sequence = Seq(sequence)  # TODO: This sequence is already trimmed! Make sure that everything is matching
-                read_sequences.append(sequence)
-                read_sequences.append(sequence.reverse_complement())
-                try:
-                    description = reads_list[id]
-                except ValueError:
-                    description = '0 idx=0, strand=+, start=0, end=0'
-                description_queue.append(description)
+            elif len(line) == 4:
+                id, sequence, length, count = line
             else:
                 break
+            sequence = Seq(sequence)  # TODO: This sequence is already trimmed! Make sure that everything is matching
+            read_sequences.append(sequence)
+            read_sequences.append(sequence.reverse_complement())
+            try:
+                description = reads_list[id]
+            except ValueError:
+                description = '0 idx=0, strand=+, start=0, end=0'
+            description_queue.append(description)
     return read_sequences, description_queue
 
 
@@ -316,7 +318,7 @@ def from_csv(graph_path, reads_path):
     read_trim_start, read_trim_end = {}, {}  # Obtained from the CSV
 
     with open(graph_path) as f:
-        for id_int, line in enumerate (f.readlines()):
+        for id_int, line in enumerate(f.readlines()):
             src, dst, flag, overlap = line.strip().split(',')
             src, dst = src.split(), dst.split()
             flag = int(flag)
@@ -341,9 +343,10 @@ def from_csv(graph_path, reads_path):
                 elif (len(descr) == 5):
                     id, idx, strand, start, end = descr
 
-                # TODO: only for the current type of real reads, doesn't work with simulated
-                # TODO: E.g., if the oridinal id is SRR9087597.16, the idx will be 16
-                    idx = int(re.findall(r'idx=[a-zA-Z]*\.{0,1}(\d+)', idx)[0])
+
+                    # TODO: only for the current type of real reads, doesn't work with simulated
+                    # TODO: E.g., if the oridinal id is SRR9087597.16, the idx will be 16
+                idx = int(re.findall(r'idx=[a-zA-Z]*\.{0,1}(\d+)', idx)[0])
 
                 strand = 1 if strand[-2] == '+' else -1  # strand[-1] == ','
 
@@ -423,7 +426,8 @@ def from_csv(graph_path, reads_path):
                 # Overlap info: id, length, weight, similarity
                 overlap = overlap.split()
                 try:
-                    (edge_id, prefix_len), (weight, similarity) = map(int, overlap[:2]), map(float, overlap[2:])
+                    (edge_id, prefix_len), weight = map(int, overlap[:2]), map(float, overlap[2:])
+
                 except IndexError:
                     continue
                 graph_nx.add_edge(src_id, dst_id)
@@ -432,8 +436,8 @@ def from_csv(graph_path, reads_path):
                     edge_ids[(src_id, dst_id)] = edge_id
                     prefix_length[(src_id, dst_id)] = prefix_len
                     overlap_length[(src_id, dst_id)] = read_length[src_id] - prefix_len
-                    overlap_similarity[(src_id, dst_id)] = similarity
-    
+                    overlap_similarity[(src_id, dst_id)] = 0
+
     nx.set_node_attributes(graph_nx, read_length, 'read_length')
     nx.set_node_attributes(graph_nx, read_idx, 'read_idx')
     nx.set_node_attributes(graph_nx, read_strand, 'read_strand')
