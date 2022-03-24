@@ -1,4 +1,6 @@
 from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
+from Bio.Seq import Seq
 import argparse
 import os
 
@@ -20,7 +22,8 @@ if __name__ == '__main__':
             for f in range(amount_of_files):
                 sequence = fasta.seq[f*args.divide:(f+1)*args.divide]
                 with open(os.path.join("divided_fastas", name + "_" + str(f) + ".fasta"), "w") as output_handle:
-                    SeqIO.write(fasta, output_handle, "fasta")
+                    rec = SeqRecord(Seq(sequence), str(f))
+                    SeqIO.write(rec, output_handle, "fasta")
                 print(name + "_" + str(f))
 
     else:
