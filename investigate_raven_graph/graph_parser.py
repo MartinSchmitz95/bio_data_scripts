@@ -238,30 +238,23 @@ def from_gfa(graph_path, reads_path):
     read_sequences = deque()
     description_queue = deque()
     # TODO: Parsing of reads won't work for larger datasets nor gzipped files
-    if(reads_path[-1] == 'q'):
-        type ='fastq'
-    elif(reads_path[-1] == 'a'):
-        type ='fasta'
-    else:
-        print("Read path doesnt lead to fasta or fastq file")
-    reads_list = {read.id: read.description for read in SeqIO.parse(reads_path, type)}
+    reads_list = {read.id: read.description for read in SeqIO.parse(reads_path, 'fastq')}
+    print(f"Amount of reads in dataset: {len(reads_list)}")
     with open(graph_path) as f:
         for line in f.readlines():
             line = line.strip().split()
             if len(line) == 5:
                 tag, id, sequence, length, count = line
-            elif len(line) == 4:
-                id, sequence, length, count = line
+                sequence = Seq(sequence)  # TODO: This sequence is already trimmed! Make sure that everything is matching
+                read_sequences.append(sequence)
+                read_sequences.append(sequence.reverse_complement())
+                try:
+                    description = reads_list[id]
+                except ValueError:
+                    description = '0 idx=0, strand=+, start=0, end=0'
+                description_queue.append(description)
             else:
                 break
-            sequence = Seq(sequence)  # TODO: This sequence is already trimmed! Make sure that everything is matching
-            read_sequences.append(sequence)
-            read_sequences.append(sequence.reverse_complement())
-            try:
-                description = reads_list[id]
-            except ValueError:
-                description = '0 idx=0, strand=+, start=0, end=0'
-            description_queue.append(description)
     return read_sequences, description_queue
 
 
@@ -318,7 +311,7 @@ def from_csv(graph_path, reads_path):
     read_trim_start, read_trim_end = {}, {}  # Obtained from the CSV
 
     with open(graph_path) as f:
-        for id_int, line in enumerate(f.readlines()):
+        for line in f.readlines():
             src, dst, flag, overlap = line.strip().split(',')
             src, dst = src.split(), dst.split()
             flag = int(flag)
@@ -333,19 +326,10 @@ def from_csv(graph_path, reads_path):
             if flag == 0:
                 # Here overlap is actually trimming info! trim_begin trim_end
                 description = description_queue.popleft()
-                descr = description.split()
-                if (len(descr)==1):
-                    print("Error! Fastq/Fasta file was not annotated with information about position on the reference!")
-                if (len(descr) == 4):
-                    id, strand, start, end = descr
-                    id = id_int
-                    idx = id_int
-                elif (len(descr) == 5):
-                    id, idx, strand, start, end = descr
+                id, idx, strand, start, end = description.split()
 
-
-                    # TODO: only for the current type of real reads, doesn't work with simulated
-                    # TODO: E.g., if the oridinal id is SRR9087597.16, the idx will be 16
+                # TODO: only for the current type of real reads, doesn't work with simulated
+                # TODO: E.g., if the oridinal id is SRR9087597.16, the idx will be 16
                 idx = int(re.findall(r'idx=[a-zA-Z]*\.{0,1}(\d+)', idx)[0])
 
                 strand = 1 if strand[-2] == '+' else -1  # strand[-1] == ','
@@ -358,7 +342,10 @@ def from_csv(graph_path, reads_path):
 
                 trimming = overlap
                 if trimming == '-':
-                    trim_start, trim_end = 0, start - end
+                    if strand == 1:
+                        trim_start, trim_end = 0, end - start  # TODO: dafuq is this, why not just len(read)
+                    if strand == -1:
+                        trim_start, trim_end = 0, start - end
                 else:
                     trim_start, trim_end = trimming.split()
                     trim_start = int(trim_start)
@@ -426,18 +413,19 @@ def from_csv(graph_path, reads_path):
                 # Overlap info: id, length, weight, similarity
                 overlap = overlap.split()
                 try:
-                    (edge_id, prefix_len), weight = map(int, overlap[:2]), map(float, overlap[2:])
-
+                    (edge_id, prefix_len), (weight, similarity) = map(int, overlap[:2]), map(float, overlap[2:])
                 except IndexError:
                     continue
+                except ValueError:
+                    (edge_id, prefix_len), weight, similarity = map(int, overlap[:2]), float(overlap[2]), 0
                 graph_nx.add_edge(src_id, dst_id)
                 graph_nx_und.add_edge(src_id, dst_id)
                 if (src_id, dst_id) not in prefix_length.keys():
                     edge_ids[(src_id, dst_id)] = edge_id
                     prefix_length[(src_id, dst_id)] = prefix_len
                     overlap_length[(src_id, dst_id)] = read_length[src_id] - prefix_len
-                    overlap_similarity[(src_id, dst_id)] = 0
-
+                    overlap_similarity[(src_id, dst_id)] = similarity
+    
     nx.set_node_attributes(graph_nx, read_length, 'read_length')
     nx.set_node_attributes(graph_nx, read_idx, 'read_idx')
     nx.set_node_attributes(graph_nx, read_strand, 'read_strand')
@@ -450,10 +438,11 @@ def from_csv(graph_path, reads_path):
     nx.set_node_attributes(graph_nx, read_trim_start, 'read_trim_start')
     nx.set_node_attributes(graph_nx, read_trim_end, 'read_trim_end')
     
-    """    # This produces vector-like features (e.g. shape=(num_nodes,))
-    graph_dgl = dgl.from_networkx(graph_nx,
+    # This produces vector-like features (e.g. shape=(num_nodes,))
+    """graph_dgl = dgl.from_networkx(graph_nx,
                                   node_attrs=['read_length', 'read_idx', 'read_strand', 'read_start', 'read_end', 'read_trim_start', 'read_trim_end'], 
                                   edge_attrs=['prefix_length', 'overlap_similarity', 'overlap_length'])
+    dgl.save_graphs('manual2/manual.dgl', graph_dgl)
     predecessors = get_predecessors(graph_dgl)
     successors = get_neighbors(graph_dgl)
     edges = get_edges(graph_dgl)
