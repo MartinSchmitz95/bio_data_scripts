@@ -7,7 +7,7 @@ from Bio import SeqIO
 import graph_parser
 import re
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 def graph_from_scratch_builder(raven_graph, read_path):
     """
@@ -40,10 +40,10 @@ def graph_from_scratch_builder(raven_graph, read_path):
     graph = nx.DiGraph()
     graph.add_edges_from(edges)
 
-    raven_graph
-    pos = nx.spring_layout(raven_graph)
-    nx.draw(raven_graph, pos)
-    plt.show()
+    #raven_graph
+    #pos = nx.spring_layout(raven_graph)
+    #nx.draw(raven_graph, pos)
+    #plt.show()
 
     return graph, read_id_mapping
 
