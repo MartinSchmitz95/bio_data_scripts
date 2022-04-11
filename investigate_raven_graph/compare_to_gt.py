@@ -10,13 +10,14 @@ import pandas as pd
 import gfapy
 # import matplotlib.pyplot as plt
 
-def graph_from_scratch_builder(raven_graph, read_path):
+def graph_from_scratch_builder(raven_graph, read_path, new_read_type):
     """
     Build the ground truth - graph given the raven graph for id retrieval and the fastq file.
     First build the ground truth graph for the positive strand, then duplicate it and flip the edges for the negative strand.
 
     Input:
             Raven graph and path to fastq read file
+            new_read_type: bool to say if the reads are from old type (5 entries in descr and reversed '-' strand) or new (4 entries and not reversed)
     Output:
             graph: the resulting ground-truth graph as networkx DiGraph
             read_id_mapping: dict that maps raven node ids to read ids
@@ -32,7 +33,7 @@ def graph_from_scratch_builder(raven_graph, read_path):
             read = (id, node["read_start"], node["read_end"])
             reads.append(read)
 
-    deleted_reads, read_id_mapping = get_all_deleted_reads(reads, read_ids, read_path, read_id_mapping)
+    deleted_reads, read_id_mapping = get_all_deleted_reads(reads, read_ids, read_path, read_id_mapping, new_read_type)
     reads = delete_contained_reads(reads + deleted_reads)
     edges, edge_info = find_gt_edges(reads)
     #paint_graph(edges)
@@ -56,7 +57,7 @@ def paint_graph(edges):
     nx.draw(graph, pos)
     plt.show()
 
-def get_all_deleted_reads(reads, read_ids, read_path, read_id_mapping):
+def get_all_deleted_reads(reads, read_ids, read_path, read_id_mapping, new_read_type):
     """
     Iterates through the provided fastq file and checks every read that is not contained in the raven graph.
     If a read is not in the raven graph and not contained by any other read we add it to the list "new reads" which is returned eventually.
@@ -66,6 +67,7 @@ def get_all_deleted_reads(reads, read_ids, read_path, read_id_mapping):
             read_ids: set of all read ids that are realized in the raven graph
             read_path: path to fastq file
             read_id_mapping: dict that maps raven ids to read ids
+            new_read_type: bool to say if the reads are from old type (5 entries in descr and reversed '-' strand) or new (4 entries and not reversed)
     Output:
             new_reads: all reads that are not contained by other reads but are not realized in the raven graph
             read_id_mapping: updated dict
@@ -75,22 +77,23 @@ def get_all_deleted_reads(reads, read_ids, read_path, read_id_mapping):
     reads = sorted(reads, key=lambda tup: tup[1])
     for record in SeqIO.parse(read_path, read_path[-5:]):  # path[-5:] is fasta for fasta file, and fastq for fastq file
         des = record.description.split()
-        if len(des) == 5:
+        if not new_read_type:
             start_index = 1
-        elif len(des) == 4:
-            start_index = 0
         else:
-            print("something went wrong")
+            start_index = 0
         if des[start_index + 1][-2] == "+":
             strand = 1
             start = int(des[start_index + 2][6:-1])
             end = int(des[start_index + 3][4:])
         else:
             strand = -1
-            end = int(des[start_index + 2][6:-1])
-            start = int(des[start_index + 3][4:])
-        id = int(des[start_index][4:-1])
-
+            if new_read_type:
+                start = int(des[start_index + 2][6:-1])
+                end = int(des[start_index + 3][4:])
+            else:
+                end = int(des[start_index + 2][6:-1])
+                start = int(des[start_index + 3][4:])
+        id = record.id  #int(des[start_index][4:-1])
         contained = False
         if id not in read_ids:
             for r in reads:
@@ -281,7 +284,7 @@ def remove_edges(edges, nodes):
             new_edges.add(e)
     return new_edges
 
-def create_gt_gfa_file(gt_graph, edge_info, read_id_mapping, read_path):
+def create_gt_gfa_file(gt_graph, edge_info, read_id_mapping, read_path, new_read_type):
     """
     create gfa-1 file for the ground-truth graph
     """
@@ -293,21 +296,23 @@ def create_gt_gfa_file(gt_graph, edge_info, read_id_mapping, read_path):
 
     for record in SeqIO.parse(read_path, read_path[-5:]):  # path[-5:] is fasta for fasta file, and fastq for fastq file
         des = record.description.split()
-        if len(des) == 5:
+        if not new_read_type:
             start_index = 1
-        elif len(des) == 4:
-            start_index = 0
         else:
-            print("something went wrong")
+            start_index = 0
         if des[start_index + 1][-2] == "+":
             strand = 1
             start = int(des[start_index + 2][6:-1])
             end = int(des[start_index + 3][4:])
         else:
             strand = -1
-            end = int(des[start_index + 2][6:-1])
-            start = int(des[start_index + 3][4:])
-        id = int(des[start_index][4:-1])
+            if new_read_type:
+                start = int(des[start_index + 2][6:-1])
+                end = int(des[start_index + 3][4:])
+            else:
+                end = int(des[start_index + 2][6:-1])
+                start = int(des[start_index + 3][4:])
+        id = record.id  # int(des[start_index][4:-1])
 
         node_lengths[id] = end-start
         sequences[id] = str(record.seq)
@@ -348,13 +353,13 @@ def create_gt_gfa_file(gt_graph, edge_info, read_id_mapping, read_path):
     print("Done. Created gfa file")
 
 def run(args):
-    raven_graph = graph_parser.from_csv(args.graph, args.reads)
+    raven_graph, new_read_type = graph_parser.from_csv(args.graph, args.reads)
     print("*** Raven graph loaded")
 
     print(f"Amount of nodes in Raven graph: {len(raven_graph.nodes())}")
     print(f"Amount of edges in Raven graph: {len(raven_graph.edges())}")
 
-    gt_graph, read_id_mapping, edge_info = graph_from_scratch_builder(raven_graph, args.reads)
+    gt_graph, read_id_mapping, edge_info = graph_from_scratch_builder(raven_graph, args.reads, new_read_type)
     print("*** Ground Truth graph created")
     print(f"Amount of nodes in ground-truth graph: {len(gt_graph.nodes())}")
     print(f"Amount of edges in ground-truth graph: {len(gt_graph.edges())}")
@@ -379,7 +384,7 @@ def run(args):
 
     edges_fp = raven_edges_for_comparison - gt_edges_for_comparison
     if args.gfa:
-        create_gt_gfa_file(gt_graph, edge_info, read_id_mapping, args.reads)
+        create_gt_gfa_file(gt_graph, edge_info, read_id_mapping, args.reads, new_read_type)
 
 
 if __name__ == '__main__':

@@ -238,7 +238,7 @@ def from_gfa(graph_path, reads_path):
     read_sequences = deque()
     description_queue = deque()
     # TODO: Parsing of reads won't work for larger datasets nor gzipped files
-    reads_list = {read.id: read.description for read in SeqIO.parse(reads_path, 'fastq')}
+    reads_list = {read.id: read.description for read in SeqIO.parse(reads_path, reads_path[-5:])}
     print(f"Amount of reads in dataset: {len(reads_list)}")
     with open(graph_path) as f:
         for line in f.readlines():
@@ -248,6 +248,7 @@ def from_gfa(graph_path, reads_path):
                 sequence = Seq(sequence)  # TODO: This sequence is already trimmed! Make sure that everything is matching
                 read_sequences.append(sequence)
                 read_sequences.append(sequence.reverse_complement())
+                #print(tag, id,reads_list[id])
                 try:
                     description = reads_list[id]
                 except ValueError:
@@ -326,11 +327,21 @@ def from_csv(graph_path, reads_path):
             if flag == 0:
                 # Here overlap is actually trimming info! trim_begin trim_end
                 description = description_queue.popleft()
-                id, idx, strand, start, end = description.split()
+                if len(description.split()) == 5:
+                    id, idx, strand, start, end = description.split()
+                    idx = int(re.findall(r'idx=[a-zA-Z]*\.{0,1}(\d+)', idx)[0])
+                    new_reads = False
+
+                elif(len(description.split()) == 4):
+                    new_reads = True
+                    id, strand, start, end = description.split()
+                    idx = id
+
+                else:
+                    print("Error wrong read file!")
 
                 # TODO: only for the current type of real reads, doesn't work with simulated
                 # TODO: E.g., if the oridinal id is SRR9087597.16, the idx will be 16
-                idx = int(re.findall(r'idx=[a-zA-Z]*\.{0,1}(\d+)', idx)[0])
 
                 strand = 1 if strand[-2] == '+' else -1  # strand[-1] == ','
 
@@ -339,6 +350,10 @@ def from_csv(graph_path, reads_path):
                 # -----------------------------------------
                 start = int(re.findall(r'start=(\d+)', start)[0])  
                 end = int(re.findall(r'end=(\d+)', end)[0])
+                if new_reads and strand == "-":
+                    tmp = end
+                    end = start
+                    start = tmp
 
                 trimming = overlap
                 if trimming == '-':
@@ -437,7 +452,9 @@ def from_csv(graph_path, reads_path):
 
     nx.set_node_attributes(graph_nx, read_trim_start, 'read_trim_start')
     nx.set_node_attributes(graph_nx, read_trim_end, 'read_trim_end')
-    
+
+    nx.write_gpickle(graph_nx, graph_path[:-3] + 'pkl')
+
     # This produces vector-like features (e.g. shape=(num_nodes,))
     """graph_dgl = dgl.from_networkx(graph_nx,
                                   node_attrs=['read_length', 'read_idx', 'read_strand', 'read_start', 'read_end', 'read_trim_start', 'read_trim_end'], 
@@ -450,4 +467,4 @@ def from_csv(graph_path, reads_path):
     for i, key in enumerate(sorted(node_data)):
         reads[i] = node_data[key]"""
 
-    return graph_nx
+    return graph_nx, new_reads
