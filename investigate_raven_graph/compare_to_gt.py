@@ -77,8 +77,10 @@ def get_all_deleted_reads(reads, read_ids, read_path, read_id_mapping):
         des = record.description.split()
         if len(des) == 5:
             start_index = 1
+            id = int(des[start_index][4:-1])
         elif len(des) == 4:
             start_index = 0
+            id = int(record.id) #int(des[start_index])
         else:
             print("something went wrong")
         if des[start_index + 1][-2] == "+":
@@ -87,9 +89,13 @@ def get_all_deleted_reads(reads, read_ids, read_path, read_id_mapping):
             end = int(des[start_index + 3][4:])
         else:
             strand = -1
-            end = int(des[start_index + 2][6:-1])
-            start = int(des[start_index + 3][4:])
-        id = int(des[start_index][4:-1])
+            if len(des) == 5:
+                end = int(des[start_index + 2][6:-1])
+                start = int(des[start_index + 3][4:])
+            else:
+                start = int(des[start_index + 2][6:-1])
+                end = int(des[start_index + 3][4:])
+
 
         contained = False
         if id not in read_ids:
@@ -105,8 +111,7 @@ def get_all_deleted_reads(reads, read_ids, read_path, read_id_mapping):
                     new_read = (new_id ,start, end)
                 elif strand == -1:
                     new_read = (new_id+1, start, end)
-
-                read_id_mapping[str(new_id+1)] = id
+                read_id_mapping[str(new_id^1)] = id
                 read_id_mapping[str(new_id)] = id
                 new_reads.append(new_read)
                 new_id -= 2
@@ -295,8 +300,10 @@ def create_gt_gfa_file(gt_graph, edge_info, read_id_mapping, read_path):
         des = record.description.split()
         if len(des) == 5:
             start_index = 1
+            id = int(des[start_index][4:-1])
         elif len(des) == 4:
             start_index = 0
+            id = int(record.id) #int(des[start_index])
         else:
             print("something went wrong")
         if des[start_index + 1][-2] == "+":
@@ -305,32 +312,34 @@ def create_gt_gfa_file(gt_graph, edge_info, read_id_mapping, read_path):
             end = int(des[start_index + 3][4:])
         else:
             strand = -1
-            end = int(des[start_index + 2][6:-1])
-            start = int(des[start_index + 3][4:])
-        id = int(des[start_index][4:-1])
-
-        node_lengths[id] = end-start
-        sequences[id] = str(record.seq)
+            if len(des) == 5:
+                end = int(des[start_index + 2][6:-1])
+                start = int(des[start_index + 3][4:])
+            else:
+                start = int(des[start_index + 2][6:-1])
+                end = int(des[start_index + 3][4:])
+        node_lengths[str(id)] = abs(end-start)
+        sequences[str(id)] = str(record.seq)
     # add nodes as lines
     # note that every node exists two times in the graph, but only one should be added since gfa creates its own virtual components
-    used_ids = []
+    used_ids = set()
     for n in gt_graph.nodes():
-        read_id = read_id_mapping[str(n)]
+        read_id = str(read_id_mapping[str(n)])
         if read_id in used_ids:
             continue
         else:
-            used_ids.append(read_id)
-        #node_line = "S\t" + str(read_id) + "\t" + str(node_lengths[read_id]) + "\t*"
-        # S	64	GGG LN:i:20832	RC:i:1
-        node_line = "S\t" + str(read_id) + "\t" + sequences[read_id] + "\tLN:i:" + str(node_lengths[read_id]) + "\tRC:i:1"
-        gfa_lines.append(node_line)
+            used_ids.add(read_id)
+            #node_line = "S\t" + str(read_id) + "\t" + str(node_lengths[read_id]) + "\t*"
+            # S	64	GGG LN:i:20832	RC:i:1
+            node_line = "S\t" + read_id + "\t" + sequences[read_id] + "\tLN:i:" + str(node_lengths[read_id]) + "\tRC:i:1"
+            gfa_lines.append(node_line)
 
     #  <eid:opt_id> <sid1:ref> <sid2:ref> <beg1:pos> <end1:pos> <beg2:pos> <end2:pos> <alignment> <tag>*
     for e in gt_graph.edges():
         source_id = str(read_id_mapping[str(e[0])])
         target_id = str(read_id_mapping[str(e[1])])
 
-        if e[0]%2 == 0:
+        if e[0] % 2 == 0:
             source_sign = "+"
         else:
             source_sign = "-"
@@ -342,7 +351,11 @@ def create_gt_gfa_file(gt_graph, edge_info, read_id_mapping, read_path):
         # L 2 + 98 - 18510 M
         edge_line = "L\t" + source_id + "\t" + source_sign + "\t" + target_id + "\t" + target_sign + "\t" + str(edge_info[e][0]) + "M"
         # edge_line = "E\t*\t" + source_id + "\t" + target_id + "\t" + beg1 + "\t" + end1 + "$\t" + beg2 + "\t" + end2 + "\t*"
-        gfa_lines.append(edge_line)
+        if start_index == 0:  # quick hack - for some reason the new reads lead to double entries for edges
+            if edge_line not in gfa_lines:
+                gfa_lines.append(edge_line)
+        else:
+            gfa_lines.append(edge_line)
     g = gfapy.Gfa(gfa_lines)
     gfapy.Gfa.to_file(g, os.path.join("output", "gt_graph.gfa"))
     print("Done. Created gfa file")
