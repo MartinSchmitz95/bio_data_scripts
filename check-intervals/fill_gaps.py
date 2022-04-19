@@ -39,7 +39,7 @@ def save_reference_sequences(chr, intervals, ref_sequence):
 
     for gap in gaps:
         ref_start = max(gap[0]-25000, 0)
-        ref_end = min(gap[1], len(ref_sequence))
+        ref_end = min(gap[1], len(ref_sequence)-1)
         descr = f'chr={chr},start={ref_start}, end={ref_end}'
         gap_seq = SeqRecord(ref_sequence[ref_start:ref_end], description=descr)
         sequences.append(gap_seq)
@@ -91,10 +91,46 @@ def recreate_dataset():
         SeqIO.write(chr_dict[chromosome], os.path.join("generated", chromosome + ".fasta"), "fasta")
 
 
-def run(args):
-    create_paf_from_sam()
-    #map_with_winnow()
+def from_paf_and_fasta(paf_path, fasta_path):
+    paf_reads = {}
+    paf_scores = {}
+    with open(paf_path) as paf:
+        for record in paf:
+            if record[11] == 255:
+                print("ups")
+                continue
+            record = record.split()
+            #description = f'idx={record[0]}, strand={record[4]}, start={record[7]}, end={record[8]}'
+            if record[0] in paf_reads.keys():
+                if paf_scores[record[0]] < record[11]:
+                    paf_reads[record[0]] = [record[4], record[5], record[7], record[8]]  # strand, chr, start, end
+                    paf_scores[record[0]] = record[11]
+                else:
+                    continue
+            else:
+                paf_reads[record[0]] = [record[4], record[5], record[7], record[8]]  # strand, chr, start, end
+                paf_scores[record[0]] = record[11]
 
+    chr_dict = {}
+    for record in SeqIO.parse(fasta_path, "fasta"):
+        if record.id in paf_reads.keys():
+            hit = paf_reads[record.id]
+            if hit[1] not in chr_dict.keys():  # create dict for every chromosome
+                chr_dict[hit[1]] = []
+            record.description = f'strand={hit[0]}, start={hit[2]}, end={hit[3]}'
+            chr_dict[hit[1]].append(record)
+        else:
+            print(f'Read {record.id} not included in PAF')
+
+    mkdir("../../scratch/gaps")
+    for chromosome in chr_dict.keys():
+        SeqIO.write(chr_dict[chromosome], "../../scratch/gaps/" + chromosome + ".fasta")), "fasta")
+
+def run(args):
+
+    #create_paf_from_sam()
+    #map_with_winnow()
+    from_paf_and_fasta.run("a", "b")
     fasta_sequences = SeqIO.parse(open(args.ref), 'fasta')
     ref_dict = {}
     all_gaps = []
@@ -117,6 +153,8 @@ def run(args):
     with open("all_gaps.fasta", "w") as output_handle:
         SeqIO.write(all_gaps, output_handle, "fasta")
     map_with_winnow()
+    create_paf_from_sam()
+    from_paf_and_fasta("../../scratch/fillgaps_output.paf", "all_gaps.fasta")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
