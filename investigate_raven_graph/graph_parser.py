@@ -327,6 +327,7 @@ def from_csv(graph_path, reads_path):
             if flag == 0:
                 # Here overlap is actually trimming info! trim_begin trim_end
                 description = description_queue.popleft()
+
                 if len(description.split()) == 5:
                     id, idx, strand, start, end = description.split()
                     idx = int(re.findall(r'idx=[a-zA-Z]*\.{0,1}(\d+)', idx)[0])
@@ -340,9 +341,6 @@ def from_csv(graph_path, reads_path):
                 else:
                     print("Error wrong read file!")
 
-                # TODO: only for the current type of real reads, doesn't work with simulated
-                # TODO: E.g., if the oridinal id is SRR9087597.16, the idx will be 16
-
                 strand = 1 if strand[-2] == '+' else -1  # strand[-1] == ','
 
                 # -----------------------------------------
@@ -350,6 +348,11 @@ def from_csv(graph_path, reads_path):
                 # -----------------------------------------
                 start = int(re.findall(r'start=(\d+)', start)[0])  
                 end = int(re.findall(r'end=(\d+)', end)[0])
+                if new_reads and strand == "-":
+                    tmp = end
+                    end = start
+                    start = tmp
+
                 if new_reads and strand == "-":
                     tmp = end
                     end = start
@@ -467,4 +470,7 @@ def from_csv(graph_path, reads_path):
     for i, key in enumerate(sorted(node_data)):
         reads[i] = node_data[key]"""
 
+    nx.write_gpickle(graph_nx, graph_path[:-3] + 'pkl')
+
     return graph_nx, new_reads
+
