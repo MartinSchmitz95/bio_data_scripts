@@ -131,7 +131,7 @@ def run(args):
 
     #create_paf_from_sam()
     #map_with_winnow()
-    from_paf_and_fasta.run("a", "b")
+    from_paf_and_fasta("../../scratch/fillgaps_output.paf", "all_gaps.fasta")
     fasta_sequences = SeqIO.parse(open(args.ref), 'fasta')
     ref_dict = {}
     all_gaps = []
