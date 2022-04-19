@@ -124,7 +124,7 @@ def from_paf_and_fasta(paf_path, fasta_path):
 
     mkdir("../../scratch/gaps")
     for chromosome in chr_dict.keys():
-        SeqIO.write(chr_dict[chromosome], "../../scratch/gaps/" + chromosome + ".fasta"), "fasta")
+        SeqIO.write(chr_dict[chromosome], "../../scratch/gaps/" + chromosome + ".fasta", "fasta")
 
 def run(args):
 

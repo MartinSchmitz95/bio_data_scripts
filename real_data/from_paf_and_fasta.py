@@ -39,7 +39,7 @@ def run(args):
     #    SeqIO.write(chr_dict[chromosome], os.path.join("scratch", os.path.join("generated", chromosome + ".fasta")), "fasta")
     mkdir("../../scratch/generated")
     for chromosome in chr_dict.keys():
-        SeqIO.write(chr_dict[chromosome], "../../scratch/generated/" + chromosome + ".fasta"), "fasta")
+        SeqIO.write(chr_dict[chromosome], "../../scratch/generated/" + chromosome + ".fasta", "fasta")
 
 
 if __name__ == '__main__':
