@@ -463,6 +463,6 @@ def from_csv(graph_path, reads_path):
     for i, key in enumerate(sorted(node_data)):
         reads[i] = node_data[key]"""
 
-    #nx.write_gpickle(graph_nx, graph_path[:-3] + 'pkl')
+    nx.write_gpickle(graph_nx, graph_path[:-3] + 'pkl')
 
     return graph_nx

@@ -1,15 +1,27 @@
 from Bio import SeqIO
 import os
 
-paf_path = "test.paf"
-fa_path = "test.fasta"
+paf_path = "scratch/winnowmap_real_reads_files/output.paf"
+fa_path = "scratch/winnowmap_real_reads_files/real_corrected.ec.fa"
 #identities: List[float] = []
 paf_reads = {}
+paf_scores = {}
 with open(paf_path) as paf:
     for record in paf:
+        if record[11] == 255:
+            print("ups")
+            continue
         record = record.split()
         #description = f'idx={record[0]}, strand={record[4]}, start={record[7]}, end={record[8]}'
-        paf_reads[record[0]] = [record[4], record[5], record[7], record[8]]  # strand, chr, start, end
+        if record[0] in paf_reads.keys():
+            if paf_scores[record[0]] < record[11]:
+                paf_reads[record[0]] = [record[4], record[5], record[7], record[8]]  # strand, chr, start, end
+                paf_scores[record[0]] = record[11]
+            else:
+                continue
+        else:
+            paf_reads[record[0]] = [record[4], record[5], record[7], record[8]]  # strand, chr, start, end
+            paf_scores[record[0]] = record[11]
 
 chr_dict = {}
 for record in SeqIO.parse(fa_path, "fasta"):
@@ -23,4 +35,4 @@ for record in SeqIO.parse(fa_path, "fasta"):
         print(f'Read {record.id} not included in PAF')
 
 for chromosome in chr_dict.keys():
-    SeqIO.write(chr_dict[chromosome], os.path.join("generated", chromosome + ".fasta"), "fasta")
+    SeqIO.write(chr_dict[chromosome], os.path.join("scratch", os.path.join("generated", chromosome + ".fasta")), "fasta")
