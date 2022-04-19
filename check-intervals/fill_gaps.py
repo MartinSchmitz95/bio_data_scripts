@@ -122,10 +122,11 @@ def from_paf_and_fasta(paf_path, fasta_path):
         else:
             print(f'Read {record.id} not included in PAF')
 
-    mkdir("../../scratch/gaps")
+    gen_dir = "../../scratch/gaps"
+    if not os.path.exists(gen_dir):
+        os.makedirs(gen_dir)
     for chromosome in chr_dict.keys():
-        SeqIO.write(chr_dict[chromosome], "../../scratch/gaps/" + chromosome + ".fasta", "fasta")
-
+        SeqIO.write(chr_dict[chromosome], os.path.join(gen_dir, chromosome) + ".fasta", "fasta")
 def run(args):
 
     #create_paf_from_sam()
