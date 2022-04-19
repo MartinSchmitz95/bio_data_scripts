@@ -53,7 +53,7 @@ def run(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--folder', type=str, default='/home/schmitzmf/scratch/winnowmap_real_reads_files/generated_winnowmap_real_reads_SRR', help='Path to folder with fasta files')
+    parser.add_argument('--folder', type=str, default='/home/schmitzmf/scratch/winnowmap_real_reads_files/generated_fastas', help='Path to folder with fasta files')
 
     args = parser.parse_args()
     run(args)
