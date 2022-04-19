@@ -6,7 +6,7 @@ import interval
 
 def load_reads(path):
     pos_reads = []
-    for record in SeqIO.parse(path, path[-5:]): # path[-5:] is fasta for fasta file, anf fastq for fastq file
+    for record in SeqIO.parse(path, path[-5:]): # path[-5:] is fasta for fasta file, and fastq for fastq file
         des = record.description.split()
         if len(des) == 5:
             start_index = 1
