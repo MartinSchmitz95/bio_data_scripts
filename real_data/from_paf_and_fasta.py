@@ -44,8 +44,8 @@ def run(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--paf', type=str, default='scratch/winnowmap_real_reads_files/output.paf', help='Path to paf')
-    parser.add_argument('--fasta', type=str, default='scratch/winnowmap_real_reads_files/real_corrected.ec.fa', help='Path to fasta')
+    parser.add_argument('--paf', type=str, default='../../scratch/winnowmap_real_reads_files/output.paf', help='Path to paf')
+    parser.add_argument('--fasta', type=str, default='../../scratch/winnowmap_real_reads_files/real_corrected.ec.fa', help='Path to fasta')
 
     args = parser.parse_args()
     run(args)
