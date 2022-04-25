@@ -24,7 +24,7 @@ Taking the error corrected reads, you can choose a too for the alignment with th
 clone and install the repo https://github.com/lh3/minimap2
 ```
 minimap2 -d ref.mmi chm13.draft_v1.1.fasta
-minimap2 -c ref.mmi real_corrected.ec.fa > alignment.paf
+minimap2 -cx map-hifi ref.mmi real_corrected.ec.fa > alignment.paf
 ```
 #### Winnowmap
 clone and install the repo https://github.com/marbl/Winnowmap
