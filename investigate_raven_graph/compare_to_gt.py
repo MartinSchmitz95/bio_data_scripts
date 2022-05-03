@@ -399,7 +399,6 @@ def run(args):
     if args.gfa:
         create_gt_gfa_file(gt_graph, edge_info, read_id_mapping, args.reads, new_read_type)
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--graph', type=str, default='data/chrX/chrX.csv', help='Path to csv file')
