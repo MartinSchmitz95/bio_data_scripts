@@ -80,10 +80,10 @@ def get_all_deleted_reads(reads, read_ids, read_path, read_id_mapping, new_read_
         if not new_read_type:
             start_index = 1
 
-            id = int(des[start_index][4:-1])
+            id = des[start_index][4:-1]
         elif len(des) == 4:
             start_index = 0
-            id = int(record.id) #int(des[start_index])
+            id = record.id #int(des[start_index])
 
         else:
             start_index = 0
@@ -303,10 +303,10 @@ def create_gt_gfa_file(gt_graph, edge_info, read_id_mapping, read_path, new_read
         des = record.description.split()
         if not new_read_type:
             start_index = 1
-            id = int(des[start_index][4:-1])
+            id = des[start_index][4:-1]
         elif len(des) == 4:
             start_index = 0
-            id = int(record.id) #int(des[start_index])
+            id = record.id #int(des[start_index])
 
         else:
             start_index = 0
