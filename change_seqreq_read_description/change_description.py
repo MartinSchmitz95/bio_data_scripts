@@ -2,6 +2,10 @@ from Bio import SeqIO
 import argparse
 import os
 
+"""
+change description of the results of seqrequester to our typical description
+"""
+
 def run(args):
 
     new_fastq = []
