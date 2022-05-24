@@ -28,7 +28,7 @@ def run(args):
 
     chromosome_list = []
     interval_list = []
-
+    read_amount_list = []
     filenames = []
     for i in range(0,23):
         filenames.append("chr" + str(i) + ".fasta")
@@ -43,10 +43,12 @@ def run(args):
             intervals = interval.interval_union(reads)
             chromosome_list.append(fasta[:-5])
             interval_list.append(intervals)
+            read_amount_list.append(len(reads))
+
 
     print(chromosome_list)
     print(interval_list)
-    d = {'chromosome': chromosome_list, 'Intervals': interval_list, 'Amount of Chunks': [len(l) for l in interval_list]}
+    d = {'chromosome': chromosome_list, 'Amount of Reads': read_amount_list, 'Intervals': interval_list, 'Amount of Chunks': [len(l) for l in interval_list]}
     df = pd.DataFrame(data=d)
     df.to_csv("interval_table.csv")
 
