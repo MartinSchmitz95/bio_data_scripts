@@ -50,5 +50,8 @@ Make sure to set the path to the reference and paf file accordingly.
 mkdir generated
 python from_paf_and_fasta.py
 ```
-
+For running the code for only one chromosome. This script runs only for the input chromosome.
+```
+python from_paf_and_fastq_chr.py
+```
 In the folder 'generated' you can find one fasta files with error corrected real reads which include strand and position info from the reference.
