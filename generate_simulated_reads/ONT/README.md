@@ -1,4 +1,4 @@
-# Project Title
+# Generate Simulated Nanopore Reads
 
 ## Description
 
