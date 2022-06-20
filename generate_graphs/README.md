@@ -1,19 +1,25 @@
-# Project Title
+# Create Raven Graphs
 
 ## Description
 
-* A short description in 1-3 sentences what the script should do
-
-### Installing
-
-* How/where to download your program
-* Any modifications needed to be made to files/folders
-* if there is nothing to do, delete this part
+This script takes a folder of fasta files as input and outputs Raven graphs in the chosen formats as output.
 
 ### Executing program
 
-* How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
+```python3 create_raven_graphs.py --data path/to/fasta_folder --gfa --networkx_g --networkx_g_full --dgl --csv --out path/to/output --single```
+
+```path/to/fasta_folder```: path to the folder of FASTA files (or to a folder with multiple folders of FASTA files)
+
+```--gfa```: activate this flag if you want to save the gfa file.
+
+```--networkx_g```: activate this flag if you want to save the networkx graph (without read sequences).
+
+```--networkx_g_full```: activate this flag if you want to save the networkx graph (with read sequences as node attributes).
+
+```--dgl```: activate this flag if you want to save the dgl file.
+
+```--csv```: activate this flag if you want to save the csv file.
+
+```path/to/output```: path to the where the output is stored.
+
+```--single```: activate this flag if the input is a single folder of FASTA files.
