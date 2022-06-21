@@ -90,10 +90,10 @@ def from_csv(graph_path, reads_path):
                 try:
                     idx = int(id)
                 except ValueError:
-                    #idx = int(re.findall(r'[a-zA-Z0-9]*\.(\d+)', id)[0])
+                    idx = int(re.findall(r'[a-zA-Z0-9]*\.(\d+)', id)[0])
                     #use the chromosome number
                     #idx = int(list(id)[3])
-                    idx = 1
+                    #idx = 1
 
                 strand = 1 if strand[-2] == '+' else -1  # strand[-1] == ','
 
