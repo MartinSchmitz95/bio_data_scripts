@@ -263,6 +263,8 @@ def main(input_path,output,args):
         #idx = idx + 1 
 
 def multi(args):
+    if 'vendor' not in os.listdir():
+        os.mkdir('vendor')
     #check if Raven is installed (if not install)
     if 'raven' not in os.listdir('vendor'):
         print(f'SETUP::generate:: Download Raven')
@@ -287,6 +289,8 @@ def multi(args):
         main(chrm_path,chrm_out,args)
 
 def single(args):
+    if 'vendor' not in os.listdir():
+        os.mkdir('vendor')
     #check if Raven is installed (if not install)
     if 'raven' not in os.listdir('vendor'):
         print(f'SETUP::generate:: Download Raven')
