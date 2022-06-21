@@ -5,8 +5,10 @@
 Use this script to create simulated ONT Nanopore reads. This script takes in the reference FASTA file, creates synthetic Nanopore reads perfect or with errors.
 
 ### Installing
-Modifications needed to be made
+Modifications needed to be made:
+
 Clone Nanosim https://github.com/bcgsc/NanoSim
+
 Unpack the model human_NA12878_DNA_FAB49712_albacore with:
 
 ```tar -xf pre-trained_models/human_NA12878_DNA_FAB49712_albacore```
