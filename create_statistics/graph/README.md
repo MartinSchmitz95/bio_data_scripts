@@ -4,6 +4,7 @@
 Creates the line plots (1 per chromosome) with two lines: 
  * Precision = TP/(TP + FN)
  * Recall = TP/(TP + FP)
+
 This script takes in as input a CSV file with the information regarding the position of source and target node on the reference as well as the edge-type (TP,TN,FP,FN).
 
 ### Executing program
