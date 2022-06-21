@@ -2,11 +2,20 @@
 
 This repo contains various scripts for data processing. Each folder contains a different project with a seperate read-me file. Below we list a short description of the scripts.
 
-## Real Data
-Create data set with real reads and annotated strand and position info from CHM13 reference
+## create_statistics
+Create statistics and diagrams of reads or graphs.
 
-## Synthetic Nanopore Graphs
-Create Raven Graphs directly from a Reference Genome. Use Nanosim to create synthetic reads and call Raven to create the graph.
+## edit_fasta
+Split a fasta file. 
 
-## Split Fasta Ref
-Split a .fasta reference file into one fasta file per entry.
+## generate_graphs
+generate graphs of different types from reads using raven.
+
+## generate_simulated_reads
+generate simulated ONT, HiFi or other reads.
+
+## investigate_raven_graphs
+investigate Raven assembly graphs from gfa and csv file, to get false positive and false negative nodes and edges.
+
+## real_data
+annotate real data and check the annotations for gaps in the data.
