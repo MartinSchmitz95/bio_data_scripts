@@ -85,7 +85,7 @@ def main(args):
                 if file.endswith(".fasta"):
                     for record in SeqIO.parse(os.path.join(os.path.abspath(name),file),'fasta'):
                         des = record.description.split("_")
-                        id = des[0] #record id [chromosome name]
+                        id = des[3] #sequence index
                         #starting position of the read
                         start = des[1]
                         #length of the read
@@ -164,7 +164,7 @@ def single(args):
             if file.endswith(".fasta"):
                 for record in SeqIO.parse(os.path.join(os.path.abspath(data_path),file),'fasta'):
                     des = record.description.split("_")
-                    id = des[0] #record id [chromosome name]
+                    id = des[3] #sequence index
                     #starting position of the read
                     start = des[1]
                     #length of the read
