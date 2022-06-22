@@ -6,7 +6,7 @@ This script takes a folder of fasta files as input and outputs Raven graphs in t
 
 ### Executing program
 
-```python3 create_raven_graphs.py --data path/to/fasta_folder --gfa --networkx_g --networkx_g_full --dgl --csv --out path/to/output --single```
+```python3 create_raven_graphs.py --data path/to/fasta_folder --gfa --gml --gmlf --dgl --csv --out path/to/output --single```
 
 ```path/to/fasta_folder```: path to the folder of FASTA files (or to a folder with multiple folders with FASTA files()
 
