@@ -185,7 +185,7 @@ def main(input_path,output,args):
     out = 'assembly.fasta'
 
     #list of input arguments (to check whether or not to make subfolders)
-    l = [args.csv,args.gfa,args.dgl,args.networkx_g,args.networkx_g_full]
+    l = [args.csv,args.gfa,args.dgl,args.gml,args.gmlf]
 
     #iterate through all the fasta files in the folder
     for fasta in os.listdir(input_path):
@@ -234,21 +234,15 @@ def main(input_path,output,args):
             dgl.save_graphs(processed_path, graph)
         
         #generate the nx file if stated
-        if args.networkx_g:
+        if args.gml:
             #without read sequences
-            #Format 1: gml
             nx.write_gml(nx1, os.path.join(tmp_dir, f'{idx}_graph.gml'))
-            #Format 2: pickle
-            #pickle.dump(nx1, open(os.path.join(tmp_dir, f'{idx}_graph.pkl'), 'wb'))
         
         #generate the nx_full file if stated
-        if args.networkx_g_full:
+        if args.gmlf:
             #with read sequences
-            #Format 1: gml
             nx.write_gml(nx2, os.path.join(tmp_dir, f'{idx}_graph_full.gml'),stringizer=str)
-            #Format 2: pickle
-            #pickle.dump(nx2, open(os.path.join(tmp_dir, f'{idx}_graph_full.pkl'), 'wb'))
-       
+
         #remove .csv if not stated
         if not args.csv:
             os.remove(os.path.join(tmp_dir,f'{idx}_graph_1.csv'))
@@ -257,8 +251,9 @@ def main(input_path,output,args):
         if not args.gfa:
             os.remove(os.path.join(tmp_dir,f'{idx}_graph_1.gfa'))
             
-        #remove the assembly.fasta file
+        #remove the assembly.fasta and raven.cereal files
         os.remove(os.path.join(tmp_dir,f'{idx}_assembly.fasta'))
+        os.remove(os.path.join(tmp_dir,'raven.cereal'))
         print(f'Parsed Raven output! Saving files...')
         #idx = idx + 1 
 
@@ -315,12 +310,11 @@ if __name__ == '__main__':
     parser.add_argument('--csv', action='store_true', default=False, help='csv file to be generated')
     parser.add_argument('--gfa', action='store_true', default=False, help='gfa file to be generated')
     parser.add_argument('--dgl', action='store_true', default=False, help='dgl file to be generatede')
-    parser.add_argument('--networkx_g', action='store_true', default=False, help='nx file to be generated')
-    parser.add_argument('--networkx_g_full', action='store_true', default=False, help='nx_full file to be generated (with read_sequences as node attributes)')
+    parser.add_argument('--gml', action='store_true', default=False, help='nx file to be generated')
+    parser.add_argument('--gmlf', action='store_true', default=False, help='nx_full file to be generated (with read_sequences as node attributes)')
     parser.add_argument('--out', type=str, default='output', help='Output name for the folder')
     parser.add_argument('--single', action='store_true', default=False, help='Single folder of fasta files')
     args = parser.parse_args()
-    
     
     #if single folder of fasta files is input
     if args.single:
@@ -328,4 +322,3 @@ if __name__ == '__main__':
     #if a folder of multiple folders is input
     else:
         multi(args)
-
