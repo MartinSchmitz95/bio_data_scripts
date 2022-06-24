@@ -1,5 +1,7 @@
 # Create Real Data
 
+Annotate real data with minimap or winnowmap alignments. 
+
 Create data set with real reads from CHM13 https://github.com/marbl/CHM13
 
 Download reference: 

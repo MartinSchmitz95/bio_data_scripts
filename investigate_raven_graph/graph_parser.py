@@ -4,6 +4,7 @@ from collections import deque, defaultdict
 from Bio import SeqIO
 from Bio.Seq import Seq
 import dgl
+import pickle
 import networkx as nx
 # import matplotlib
 # matplotlib.interactive(True)
@@ -443,7 +444,12 @@ def from_csv(graph_path, reads_path):
                     prefix_length[(src_id, dst_id)] = prefix_len
                     overlap_length[(src_id, dst_id)] = read_length[src_id] - prefix_len
                     overlap_similarity[(src_id, dst_id)] = similarity
-    
+    reads = {}
+    for i, key in enumerate(sorted(node_data)):
+        reads[i] = node_data[key]
+
+    nx.set_node_attributes(graph_nx, node_data, 'read_sequence')
+
     nx.set_node_attributes(graph_nx, read_length, 'read_length')
     nx.set_node_attributes(graph_nx, read_idx, 'read_idx')
     nx.set_node_attributes(graph_nx, read_strand, 'read_strand')
@@ -459,18 +465,24 @@ def from_csv(graph_path, reads_path):
     nx.write_gpickle(graph_nx, graph_path[:-3] + 'pkl')
 
     # This produces vector-like features (e.g. shape=(num_nodes,))
-    """graph_dgl = dgl.from_networkx(graph_nx,
-                                  node_attrs=['read_length', 'read_idx', 'read_strand', 'read_start', 'read_end', 'read_trim_start', 'read_trim_end'], 
+    graph_dgl = dgl.from_networkx(graph_nx,
+                                  node_attrs=['read_length', 'read_strand', 'read_start', 'read_end', 'read_trim_start', 'read_trim_end'],
                                   edge_attrs=['prefix_length', 'overlap_similarity', 'overlap_length'])
-    dgl.save_graphs('manual2/manual.dgl', graph_dgl)
     predecessors = get_predecessors(graph_dgl)
     successors = get_neighbors(graph_dgl)
     edges = get_edges(graph_dgl)
-    reads = {}
-    for i, key in enumerate(sorted(node_data)):
-        reads[i] = node_data[key]"""
+
 
     nx.write_gpickle(graph_nx, graph_path[:-3] + 'pkl')
+    #dgl.save_graphs(graph_path[:-3] + 'dgl', graph_dgl)
+    #pickle.dump(predecessors, open(f'{graph_path[:-3]}_pred.pkl', 'wb'))
+    #pickle.dump(successors, open(f'{graph_path[:-3]}_succ.pkl', 'wb'))
+    #pickle.dump(reads, open(f'{graph_path[:-3]}_reads.pkl', 'wb'))
+    #pickle.dump(edges, open(f'{graph_path[:-3]}_edges.pkl', 'wb'))
+    #pickle.dump(labels, open(f'{graph_path[:-3]}_labels.pkl', 'wb'))
+
+    #dgl.save_graphs(graph_path[:-3] + 'dgl', graph_dgl)
+    print("Saved graphs")
 
     return graph_nx, new_reads
 
