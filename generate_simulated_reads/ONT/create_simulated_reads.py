@@ -97,7 +97,7 @@ def main(args):
                             end = int(start) + read_length 
                         else:
                             strand = '-'
-                            end = int(start) - read_length
+                       
                         record.id = id
                         #alter the description
                         record.description = f'strand={strand}, start={start}, end={end}'
@@ -176,7 +176,7 @@ def single(args):
                         end = int(start) + read_length 
                     else:
                         strand = '-'
-                        end = int(start) - read_length
+                    
                     record.id = id
                     #alter the description
                     record.description = f'strand={strand}, start={start}, end={end}'
