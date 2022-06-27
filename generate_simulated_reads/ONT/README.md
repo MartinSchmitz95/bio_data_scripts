@@ -36,9 +36,11 @@ def set_globals():
  ```
 
 ### Executing program
-```python3 ont_reads.py --data path/to/fasta --coverage --perfect --single --runs```
+```python3 ont_reads.py --data path/to/fasta --out path/to/output --coverage --perfect --single --runs```
 
 ```path/to/fasta```: Path to your fastq or fasta file (can be the whole file or a single chromosome)
+
+```path/to/output```: Path where the output is to stored (name of the folder/directory)
 
 ```--coverage```:  this flag helps to choose the coverage of the reads.
 
