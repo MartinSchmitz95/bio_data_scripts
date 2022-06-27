@@ -36,7 +36,7 @@ def set_globals():
  ```
 
 ### Executing program
-```python3 ont_reads.py --data path/to/fasta --out path/to/output --coverage --perfect --single --runs```
+```python ont_reads.py --data path/to/fasta --out path/to/output --coverage --perfect --single --runs```
 
 ```path/to/fasta```: Path to your fastq or fasta file (can be the whole file or a single chromosome)
 
