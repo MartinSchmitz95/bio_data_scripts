@@ -94,10 +94,10 @@ def main(args):
                         #forward or reverse
                         if des[4] == 'F':
                             strand = '+'
-                            end = int(start) + read_length 
+                             
                         else:
                             strand = '-'
-                       
+                        end = int(start) + read_length
                         record.id = id
                         #alter the description
                         record.description = f'strand={strand}, start={start}, end={end}'
@@ -173,10 +173,10 @@ def single(args):
                     #forward or reverse
                     if des[4] == 'F':
                         strand = '+'
-                        end = int(start) + read_length 
+                         
                     else:
                         strand = '-'
-                    
+                    end = int(start) + read_length
                     record.id = id
                     #alter the description
                     record.description = f'strand={strand}, start={start}, end={end}'
