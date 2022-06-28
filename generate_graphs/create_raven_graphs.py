@@ -312,6 +312,8 @@ if __name__ == '__main__':
     parser.add_argument('--dgl', action='store_true', default=False, help='dgl file to be generatede')
     parser.add_argument('--gml', action='store_true', default=False, help='nx file to be generated')
     parser.add_argument('--gmlf', action='store_true', default=False, help='nx_full file to be generated (with read_sequences as node attributes)')
+    parser.add_argument('--pkl', action='store_true', default=False, help='nx file to be generated')
+    parser.add_argument('--pklf', action='store_true', default=False, help='nx_full file to be generated (with read_sequences as node attributes)')
     parser.add_argument('--out', type=str, default='output', help='Output name for the folder')
     parser.add_argument('--single', action='store_true', default=False, help='Single folder of fasta files')
     args = parser.parse_args()
