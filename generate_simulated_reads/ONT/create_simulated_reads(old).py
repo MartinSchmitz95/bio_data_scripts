@@ -89,15 +89,15 @@ def main(args):
                         #starting position of the read
                         start = des[1]
                         #length of the read
-                        read_length = int(des[5]) + int(des[6]) + int(des[7])
+                        read_length = len(record.seq)
                         #print(id)
                         #forward or reverse
                         if des[4] == 'F':
                             strand = '+'
-                            end = int(start) + read_length 
+                             
                         else:
                             strand = '-'
-                            end = int(start) - read_length
+                        end = int(start) + read_length
                         record.id = id
                         #alter the description
                         record.description = f'strand={strand}, start={start}, end={end}'
@@ -168,15 +168,15 @@ def single(args):
                     #starting position of the read
                     start = des[1]
                     #length of the read
-                    read_length = int(des[5]) + int(des[6]) + int(des[7])
+                    read_length = len(record.seq)
                     #print(id)
                     #forward or reverse
                     if des[4] == 'F':
                         strand = '+'
-                        end = int(start) + read_length 
+                         
                     else:
                         strand = '-'
-                        end = int(start) - read_length
+                    end = int(start) + read_length
                     record.id = id
                     #alter the description
                     record.description = f'strand={strand}, start={start}, end={end}'

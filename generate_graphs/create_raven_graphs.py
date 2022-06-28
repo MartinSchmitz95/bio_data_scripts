@@ -242,6 +242,16 @@ def main(input_path,output,args):
         if args.gmlf:
             #with read sequences
             nx.write_gml(nx2, os.path.join(tmp_dir, f'{idx}_graph_full.gml'),stringizer=str)
+        
+        #generate the nx pkl file if stated
+        if args.pkl:
+            #without read sequences
+            pickle.dump(nx1, open(os.path.join(tmp_dir, f'{idx}_graph.pkl'), 'wb'))
+        
+        #generate the nx_full pkl file if stated
+        if args.pklf:
+            #with read sequences
+            pickle.dump(nx2, open(os.path.join(tmp_dir, f'{idx}_graph_full.pkl'), 'wb'))
 
         #remove .csv if not stated
         if not args.csv:
@@ -254,7 +264,7 @@ def main(input_path,output,args):
         #remove the assembly.fasta and raven.cereal files
         os.remove(os.path.join(tmp_dir,f'{idx}_assembly.fasta'))
         os.remove(os.path.join(tmp_dir,'raven.cereal'))
-        print(f'Parsed Raven output! Saving files...')
+        print('Parsed Raven output! Saving files...')
         #idx = idx + 1 
 
 def multi(args):
@@ -312,6 +322,8 @@ if __name__ == '__main__':
     parser.add_argument('--dgl', action='store_true', default=False, help='dgl file to be generatede')
     parser.add_argument('--gml', action='store_true', default=False, help='nx file to be generated')
     parser.add_argument('--gmlf', action='store_true', default=False, help='nx_full file to be generated (with read_sequences as node attributes)')
+    parser.add_argument('--pkl', action='store_true', default=False, help='nx file to be generated')
+    parser.add_argument('--pklf', action='store_true', default=False, help='nx_full file to be generated (with read_sequences as node attributes)')
     parser.add_argument('--out', type=str, default='output', help='Output name for the folder')
     parser.add_argument('--single', action='store_true', default=False, help='Single folder of fasta files')
     args = parser.parse_args()

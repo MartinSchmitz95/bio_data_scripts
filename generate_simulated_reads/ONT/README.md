@@ -36,9 +36,11 @@ def set_globals():
  ```
 
 ### Executing program
-```python3 create_simulated_reads.py --data path/to/fasta --coverage --perfect --single --runs```
+```python ont_reads.py --data path/to/fasta --out path/to/output --coverage --perfect --single --runs```
 
 ```path/to/fasta```: Path to your fastq or fasta file (can be the whole file or a single chromosome)
+
+```path/to/output```: Path where the output is to stored (name of the folder/directory)
 
 ```--coverage```:  this flag helps to choose the coverage of the reads.
 
@@ -46,4 +48,4 @@ def set_globals():
 
 ```--single```: activate this flag if the input file is of a single chromosome.
 
-```--runs```: (only in case of single chromosome) chooses the number of times NanoSim runs, that is the number of datasets of the simulated datasets created.
+```--runs```: chooses the number of datasets of the simulated datasets created.
