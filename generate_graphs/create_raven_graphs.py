@@ -242,6 +242,16 @@ def main(input_path,output,args):
         if args.gmlf:
             #with read sequences
             nx.write_gml(nx2, os.path.join(tmp_dir, f'{idx}_graph_full.gml'),stringizer=str)
+        
+        #generate the nx pkl file if stated
+        if args.pkl:
+            #without read sequences
+            pickle.dump(nx1, open(os.path.join(tmp_dir, f'{idx}_graph.pkl'), 'wb'))
+        
+        #generate the nx_full pkl file if stated
+        if args.pklf:
+            #with read sequences
+            pickle.dump(nx2, open(os.path.join(tmp_dir, f'{idx}_graph_full.pkl'), 'wb'))
 
         #remove .csv if not stated
         if not args.csv:
