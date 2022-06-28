@@ -5,7 +5,7 @@
 Use this script to create simulated reads. This script takes in the reference FASTA file and creates the required synthetic reads.
 
 ### Executing program
-```python ont_reads.py --data path/to/fasta --out path/to/output --reads_to_mimic path/to/fasta  --coverage  --single --runs```
+```python create_reads.py --data path/to/fasta --out path/to/output --reads_to_mimic path/to/fasta  --coverage  --single --runs```
 
 ```path/to/fasta```: Path to your fastq or fasta file (can be the whole file or a single chromosome)
 
