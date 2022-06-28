@@ -48,4 +48,4 @@ def set_globals():
 
 ```--single```: activate this flag if the input file is of a single chromosome.
 
-```--runs```: chooses the number of times NanoSim runs, that is the number of datasets of the simulated datasets created.
+```--runs```: chooses the number of datasets of the simulated datasets created.
