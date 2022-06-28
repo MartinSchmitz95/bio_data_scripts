@@ -264,7 +264,7 @@ def main(input_path,output,args):
         #remove the assembly.fasta and raven.cereal files
         os.remove(os.path.join(tmp_dir,f'{idx}_assembly.fasta'))
         os.remove(os.path.join(tmp_dir,'raven.cereal'))
-        print(f'Parsed Raven output! Saving files...')
+        print('Parsed Raven output! Saving files...')
         #idx = idx + 1 
 
 def multi(args):
