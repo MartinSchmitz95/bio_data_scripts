@@ -2,7 +2,7 @@
 
 ## Description
 
-This script takes a folder of fasta files as input and outputs Raven graphs in the chosen formats as output.
+This script takes a folder of fasta files as input and outputs Raven graphs in the chosen formats.
 
 ### Executing program
 
