@@ -185,7 +185,7 @@ def main(input_path,output,args):
     out = 'assembly.fasta'
 
     #list of input arguments (to check whether or not to make subfolders)
-    l = [args.csv,args.gfa,args.dgl,args.gml,args.gmlf]
+    l = [args.csv,args.gfa,args.dgl,args.gml,args.gmlf,args.pkl,args.pklf]
 
     #iterate through all the fasta files in the folder
     for fasta in os.listdir(input_path):
