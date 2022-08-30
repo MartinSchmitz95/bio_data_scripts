@@ -115,8 +115,8 @@ def from_csv(graph_path, reads_path):
                 start = start + trim_start
 
                 read_sequence = read_sequences.popleft()
-                node_data[src_id] = read_sequence
-                node_data[dst_id] = read_sequence.reverse_complement()
+                node_data[src_id] = str(read_sequence)
+                node_data[dst_id] = str(read_sequence.reverse_complement())
                 
                 read_length[src_id], read_length[dst_id] = src_len, dst_len
                 read_idx[src_id] = read_idx[dst_id] = idx
