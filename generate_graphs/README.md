@@ -1,3 +1,13 @@
+# Create HiFIasm Graphs
+> git clone https://github.com/lbcb-sci/hifiasm.git
+
+> cd hifiasm && make
+
+Then run:
+
+> python create_hifiasm_graphs --data data --out out_dir
+
+
 # Create Raven Graphs
 
 ## Description
