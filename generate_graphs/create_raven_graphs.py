@@ -14,6 +14,8 @@ import shutil
 import torch
 import networkx as nx
 import algorithms
+from torch_geometric.utils.convert import to_networkx, from_networkx
+
 
 def get_neighbors(graph):
     neighbor_dict = {i.item(): [] for i in graph.nodes()}
@@ -131,6 +133,7 @@ def from_csv(graph_path, reads_path):
                 
             else:
                 # Overlap info: id, length, weight, similarity
+                print("fdgdfsgfsdgdsg")
                 overlap = overlap.split()
                 try:
                     (edge_id, prefix_len), (weight, similarity) = map(int, overlap[:2]), map(float, overlap[2:])
@@ -145,7 +148,10 @@ def from_csv(graph_path, reads_path):
                     prefix_length[(src_id, dst_id)] = prefix_len
                     overlap_length[(src_id, dst_id)] = read_length[src_id] - prefix_len
                     overlap_similarity[(src_id, dst_id)] = similarity
-    
+
+
+    #g = from_networkx(graph_nx)
+    #graph_nx = to_networkx(g)
     nx.set_node_attributes(graph_nx, read_length, 'read_length')
     nx.set_node_attributes(graph_nx, read_idx, 'read_idx')
     nx.set_node_attributes(graph_nx, read_strand, 'read_strand')
@@ -162,10 +168,12 @@ def from_csv(graph_path, reads_path):
     g2 = graph_nx.copy()
     #add read sequence as attribute
     nx.set_node_attributes(g2, node_data, 'read_sequence')
-    
+
+
+
     # This produces vector-like features (e.g. shape=(num_nodes,))
     graph_dgl = dgl.from_networkx(graph_nx,
-                                  node_attrs=['read_length', 'read_idx', 'read_strand', 'read_start', 'read_end', 'read_trim_start', 'read_trim_end'], 
+                                  node_attrs=['read_length', 'read_idx', 'read_strand', 'read_start', 'read_end', 'read_trim_start', 'read_trim_end'],
                                   edge_attrs=['prefix_length', 'overlap_similarity', 'overlap_length'])
 
     successors = get_neighbors(graph_dgl)

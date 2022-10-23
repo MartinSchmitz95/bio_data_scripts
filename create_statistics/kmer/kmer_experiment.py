@@ -68,22 +68,34 @@ def create_summarizing_stats(kmer_dict, bucket_size, max_size):
 
     return count_per_kmer, list(count_array)
 
+def create_summarizing_stats_nomax(kmer_dict, bucket_size, max_size):
+    count_array = np.zeros(max_size//bucket_size+1)-1
+    for key in kmer_dict.keys():
+        if kmer_dict[key] < max_size:
+            count_array[kmer_dict[key]//bucket_size] += 1
+
+    count_per_kmer = []
+    for i in range(len(count_array)):
+        s = f'{i*bucket_size}-{i*bucket_size+bucket_size-1}'
+        count_per_kmer.append(s)
+
+    return count_per_kmer, list(count_array)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # input
     parser.add_argument('--k', type=int, default=7, help='k for kmers')
     parser.add_argument('--w', type=int, default=7, help='w for minimizers')
-    parser.add_argument('--ref', type=str, default='../data/chm13.draft_v1.1.fasta',
+    parser.add_argument('--ref', type=str, default='chm13.draft_v1.1.fasta',
                         help='Path to ref')
 
     args = parser.parse_args()
     sequences = []
     for i, record in enumerate(SeqIO.parse(args.ref, "fasta")):
-        if i<19:
-            continue
+        #if i<19:
+        #    continue
         sequences.append(str(record.seq))
-        break
+        #break
 
     k = args.k
     w = args.w
@@ -91,9 +103,9 @@ if __name__ == '__main__':
     #found_kmers = create_minimizer_stats(sequences, k, w)
     #print(f'k={k}, possible kmers = {4 ** k}, kmers found in ref: {found_kmers}, = {found_kmers / (4 ** k) * 100}%')
 
-    min_dict = create_minimizer_dict(sequences, k, w)
+    """min_dict = create_minimizer_dict(sequences, k, w)
     #min_dict = create_kmer_dict(sequences,k)
-    count_per_kmer, unique_kmers = create_summarizing_stats(min_dict, bucket_size=25, max_size=1000)
+    count_per_kmer, unique_kmers = create_summarizing_stats_nomax(min_dict, bucket_size=25, max_size=2000)
     # transfer everything to a dataset
 
     dataframe = pd.DataFrame({
@@ -105,4 +117,4 @@ if __name__ == '__main__':
     plt.setp(line_plot.get_xticklabels(), rotation=90, horizontalalignment='right', fontsize=8)
     plt.savefig(f'plot.png', bbox_inches="tight")
     plt.clf()
-    print("successfully saved plots")
+    print("successfully saved plots")"""
