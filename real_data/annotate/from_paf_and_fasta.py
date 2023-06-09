@@ -37,17 +37,18 @@ def run(args):
 
     #for chromosome in chr_dict.keys():
     #    SeqIO.write(chr_dict[chromosome], os.path.join("scratch", os.path.join("generated", chromosome + ".fasta")), "fasta")
-    gen_dir = "../../scratch/generated"
-    if not os.path.exists(gen_dir):
-        os.makedirs(gen_dir)
+    out_dir = args.out
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
     for chromosome in chr_dict.keys():
-        SeqIO.write(chr_dict[chromosome], os.path.join(gen_dir, chromosome) + ".fasta", "fasta")
+        SeqIO.write(chr_dict[chromosome], os.path.join(out_dir, chromosome) + ".fasta", "fasta")
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--paf', type=str, default='../../scratch/winnowmap_real_reads_files/output.paf', help='Path to paf')
     parser.add_argument('--fasta', type=str, default='../../scratch/winnowmap_real_reads_files/real_corrected.ec.fa', help='Path to fasta')
+    parser.add_argument('--out', type=str, default='generated', help='out dir')
 
     args = parser.parse_args()
     run(args)

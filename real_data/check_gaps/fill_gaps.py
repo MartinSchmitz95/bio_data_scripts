@@ -60,8 +60,10 @@ def create_paf_from_sam(args):
 
 def add_record_to_fill_gaps(record, paf_reads, gaps_dict):
     description = record[5].split("_")
+    if len(description) == 5:
+        chr = description.pop(0)
+        description[0] = chr + "_" + description[0]
     chr = description[0]
-    print(description)
     start = int(description[2]) #+ int(record[7])  # position of the gap in ref
     end = int(description[3]) #+ int(record[8])
 
@@ -76,7 +78,6 @@ def add_record_to_fill_gaps(record, paf_reads, gaps_dict):
         new_hit = [record[4], chr, start, end, int(record[11]), record[0], record[9]]  # strand, chr, start, end, score
 
     hits_gap = False
-    print(chr, gaps_dict[chr])
     for gap in gaps_dict[chr]:
         gap_start = gap[0]
         gap_end = gap[1]
@@ -189,7 +190,7 @@ def create_gap_file(args):
 
     print("Save Sequences")
     all_gaps = [item for sublist in all_gaps for item in sublist]
-    with open("all_gaps.fasta", "w") as output_handle:
+    with open(args.all_gaps, "w") as output_handle:
         SeqIO.write(all_gaps, output_handle, "fasta")
 
 def new_alignments_info(alignments):
